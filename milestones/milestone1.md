@@ -17,18 +17,18 @@ We will present our findings through a dashboard with graphs detailing the relat
 
 ## Preliminary Data Sources
 
-### Data Source #1: 2005 Land Use Inventory for Northeastern Illinois (City of Chicago open data portal)
+### Data Source #1: [2005 Land Use Inventory for Northeastern Illinois](https://datahub.cmap.illinois.gov/datasets/2be439b2e0e84f58ab219b7baf3feff2_3/about) (City of Chicago open data portal)
 
 This geospatial dataset contains land parcels for the City of Chicago. Each parcel has been tagged with a particular land use (e.g. housing, commercial, open space, etc). We will download the GeoJSON files as bulk data, which contains latitude and longitude coordinates for each parcel in addition to the land use information.
 
 By itself, this dataset helps us spatialize open and recreational spaces in Chicago. However, the primary challenge comes from the layer of sociodemographic analysis. Each land parcel does not have a neat corresponding Census tract ID in this data. We will need to assign each parcel a Census tract ID using the available location information for the parcel to use the corresponding ACS sociodemographic data. It would be important to develop a strategy to assign a Census tract ID for land parcels that overlap with multiple Census tracts.
 
-### Data Source #2: 2018 Land Use Inventory for Northeastern Illinois (City of Chicago open data portal)
+### Data Source #2: [2018 Land Use Inventory for Northeastern Illinois](https://datahub.cmap.illinois.gov/maps/c7959bd1c0084edba3264099deeaf365/about) (City of Chicago open data portal)
 
 Like dataset #1, we will download this as bulk data from the URL above.
 This dataset provides similar opportunities for spatial analysis in Chicago as dataset #1 and similar challenges for data linking and reconciliation with the 2018 ACS sociodemographic data.
 
-### Data Source #3: 2005 American Community Survey (Access via ACS API) 
+### Data Source #3: [2005 American Community Survey](https://www.census.gov/data/developers/data-sets/acs-1year.2018.html#list-tab-843855098) (Access via [ACS API](https://www.census.gov/programs-surveys/acs/data/data-via-api.html)) 
 
 Representative household survey collected throughout the year, containing population estimates that include size of residents and household composition, as well as relevant socio demographic information on housing conditions, race/ethnicity, employment status, and income and vulnerability (poverty, access to social assistance and public services). This will help answer who has access to open spaces in Chicago.
 
@@ -37,7 +37,7 @@ Challenges:
 - Disaggregation of data at the county-subdivision-level is only available for population clusters with 65,000 or more people.
 - Convenience of working with preprocessed aggregates at the tract-level vs. specificity of processing raw data based on desired attributes. 
 
-### Data Source 4:2018 American Community Survey (Access via ACS API)
+### Data Source 4: [2018 American Community Survey](https://www.census.gov/data/developers/data-sets/acs-1year.2018.html#list-tab-843855098) (Access via [ACS API](https://www.census.gov/programs-surveys/acs/data/data-via-api.html))
 
 This dataset contains the same socio-demographic characteristics (household size, race, etc) as dataset #3. As a result, it presents similar opportunities and challenges as described above.
 
