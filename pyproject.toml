@@ -8,4 +8,5 @@ dependencies = [
     "census>=0.8.23",
     "pandas>=2.2.3",
     "us>=3.2.0",
+    "geopandas>=1.0.1",
 ]
