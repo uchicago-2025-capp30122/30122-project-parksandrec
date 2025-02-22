@@ -8,7 +8,6 @@ CENSUS_KEY = os.environ["CENSUS_KEY"]
 c = Census(CENSUS_KEY)
 
 vars = ("NAME", 
-                                       # combined races included 
                                        'B19013_001E', # median household income
                                        'B02001_001E', # total pop
                                        'B02008_001E', # white
