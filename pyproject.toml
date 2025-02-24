@@ -9,4 +9,8 @@ dependencies = [
     "pandas>=2.2.3",
     "us>=3.2.0",
     "geopandas>=1.0.1",
+    "altair>=5.5.0",
+    "vega-datasets>=0.9.0",
+    "shapely>=2.0.7",
+    "pygris>=0.1.6",
 ]
