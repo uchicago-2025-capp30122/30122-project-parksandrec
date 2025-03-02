@@ -1,11 +1,6 @@
 from census import Census
 from us import states
 import pandas as pd
-import os
-
-CENSUS_KEY = os.environ["CENSUS_KEY"]
-
-c = Census(CENSUS_KEY)
 
 vars = (
     "NAME",
@@ -31,7 +26,9 @@ vars = (
 
 
 
-def get_census_data(census = c, year = 2018, vars = vars):
+def get_census_data(key, year = 2018, vars = vars):
+    
+    census = Census(key)
     data = census.acs5dp.state_county_tract(vars,
                                     state_fips = states.IL.fips, 
                                     county_fips = "031",
