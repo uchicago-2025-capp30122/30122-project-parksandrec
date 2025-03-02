@@ -29,7 +29,7 @@ def get_geodata(landuse_path, tract_path):
     for _, land_parcel in cook_county_land.iterrows():
         for __, tract in cook_county_tracts.iterrows():
             if tract['geometry'].contains(land_parcel['centroid']):
-                cook_county_land['census_tract'] = tract['TRACTCE']
+                land_parcel['census_tract'] = tract['TRACTCE']
                 break
 
     # Save as pickle locally during implementation, potentially giving the user
