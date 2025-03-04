@@ -35,7 +35,7 @@ def get_lui_data(page_url):
 def write_geojson(filename, record_count=0, max_records=100000):
     """ """
     assert record_count < max_records
-    # boolean = True
+
     features = []
     if record_count == 0: 
         page_url = START_URL
@@ -55,7 +55,6 @@ def write_geojson(filename, record_count=0, max_records=100000):
 
         if record_count == 509803:
             break
-        print(record_count)
 
     with open(geojson_file, "w") as file:
         lui_geojson = {
