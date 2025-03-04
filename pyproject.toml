@@ -19,4 +19,6 @@ dependencies = [
     "matplotlib>=3.10.1",
     "lxml>=5.3.1",
     "httpx>=0.28.1",
+    "mapclassify>=2.8.1",
+    "folium>=0.19.5",
 ]
