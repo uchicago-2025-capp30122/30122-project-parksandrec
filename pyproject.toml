@@ -17,4 +17,6 @@ dependencies = [
     "pathlib>=1.0.1",
     "fiona>=1.10.1",
     "matplotlib>=3.10.1",
+    "lxml>=5.3.1",
+    "httpx>=0.28.1",
 ]
