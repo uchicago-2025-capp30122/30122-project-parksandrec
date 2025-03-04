@@ -4,38 +4,51 @@ from pathlib import Path
 import pickle
 
 def get_geodata(landuse_path, tract_path):
-    # Load data
-    land_use_shapefile_path = landuse_path
-    tract_shapefile_path = tract_path
-
     # Load as geopandas
-    gdf_landuse = gpd.read_file(land_use_shapefile_path)
-    gdf = gpd.read_file(tract_shapefile_path)
+    landuse = gpd.read_file(landuse_path)
+    tracts = gpd.read_file(tract_path)
 
-    # Change landuse coordinates (projection)
-    gdf_landuse = gdf_landuse.to_crs("EPSG:4269")
+    # Drop columns in that we will not be using
+    df_landuse = landuse.drop(columns=['LANDUSE2', 'OS_MGMT', 'FAC_NAME', 
+                                       'PLATTED', 'MODIFIER', 'ORIG_FID']).copy() # Evaluate make a copy
+    df_tracts = tracts.drop(columns=['AWATER', 'ALAND', 'LSAD', 'NAME', 
+                                     'GEOID', 'AFFGEOID', 'STATEFP']).copy()
 
-    gdf_landuse['centroid'] = gdf_landuse['geometry'].centroid
+    # Only Cook County data and add census tract column
+    cook_landuse = df_landuse[df_landuse['FIRST_COUNTY'] == '031']
+    cook_landuse['census_tract_id'] = ''
+    cook_tracts = df_tracts[df_tracts['COUNTYFP'] == '031']
 
-    # Add dummy column before merge
-    gdf_landuse['census_tract'] = 0
+    # Merge datasets:
+    for index, parcel in cook_landuse.iterrows():
+        try:
+            # Get the geometry data for every row
+            geom = parcel['geometry']
+            if geom is None or geom.is_empty:
+                continue # If no geometry data, continue
+            centroid = parcel['geometry'].centroid  # Compute centroid
+        except Exception as e:
+            continue # If something went wrong, just continue
 
-    # Filter only for cook_county. head(10) is for testing, this will be removed
-    # for the final data
-    cook_county_land = gdf_landuse[gdf_landuse['FIRST_COUN'] == '031'].head(10)
-    cook_county_tracts = gdf[gdf['COUNTYFP'] == '031']
+        match_found = False # Initiate to later check NAs
+        for _, tract in cook_tracts.iterrows():
+            try:
+                # Check if centroid inside the tract polygon
+                tract_polyon = tract['geometry']
+                if tract_polyon.contains(centroid):
+                    # If so, add it to the census_tract_id column
+                    cook_landuse.loc[index, 'census_tract_id'] = tract['TRACTCE']
+                    match_found = True
+                    break  # Exit loop once a match is found
+            except Exception as e:
+                continue
 
-    # Merge the datasets
-    for _, land_parcel in cook_county_land.iterrows():
-        for __, tract in cook_county_tracts.iterrows():
-            if tract['geometry'].contains(land_parcel['centroid']):
-                land_parcel['census_tract'] = tract['TRACTCE']
-                break
+        # If no tract contains the centroid, assign a None value
+        if not match_found:
+            cook_landuse.loc[index, 'census_tract_id'] = None
+    
+    # Drop all those None values in the same df
+    cook_landuse.dropna(subset=['census_tract_id'], how='all', inplace=True)
 
-    # Save as pickle locally during implementation, potentially giving the user
-    # the option to save locally as well
-    cook_county_land.to_pickle('../../../merged_df.pkl')
-
-# This will change for the final data
-get_geodata('/Users/chemagalvez/capp/projects/data/2018_Land_Use_Inventory_for_Northeastern_Illinois/2018_Land_Use_Inventory_for_Northeastern_Illinois.shp', 
-               '/Users/chemagalvez/capp/projects/data/cb_2018_17_tract_500k/cb_2018_17_tract_500k.shp')
+    # Pickle !
+    cook_landuse.to_pickle("parcel_tract_linked.pkl")
