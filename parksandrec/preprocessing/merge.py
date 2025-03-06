@@ -5,8 +5,11 @@ import acs, geospatial
 import json
 import pickle
 
-lui_file_path = "/Users/sarahhussain/Downloads/parcel_tract_linked_nona.pkl"
-CENSUS_KEY = os.environ["CENSUS_KEY"]
+#lui_file_path = "/Users/sarahhussain/Downloads/parcel_tract_linked_nona.pkl"
+
+lui_file_path = '/home/phernandezpedraz/capp30122/30122-project-parksandrec/parcel_tract_linked_nona.pkl'
+
+CENSUS_KEY =  os.getenv('CENSUS_KEY')
 
 def merge_data():
     """
@@ -34,8 +37,8 @@ def merge_data():
     return land_acs_merged
 
 # EDA
-data = merge_data()
-print(data[['census_tract_id', 'LANDUSE', 'Shape__Area', 'median_hh_income', 'tot_pop']].head())
+# data = merge_data()
+# print(data[['census_tract_id', 'LANDUSE', 'Shape__Area', 'median_hh_income', 'tot_pop']].head())
 
 
 
