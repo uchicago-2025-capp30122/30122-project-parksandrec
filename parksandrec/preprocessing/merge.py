@@ -1,21 +1,50 @@
+import os
+import sys 
 import pandas as pd
 import acs, geospatial
 import json
+import pickle
+
+#lui_file_path = "/Users/sarahhussain/Downloads/parcel_tract_linked_nona.pkl"
+
+lui_file_path = '/home/phernandezpedraz/capp30122/30122-project-parksandrec/parcel_tract_linked_nona.pkl'
+
+CENSUS_KEY =  os.getenv('CENSUS_KEY')
 
 def merge_data():
     """
-    Merges the ACS socio-demographic data with the geospatial data on the census
+    Merges the ACS socio-demographic data with the LUI on the census
     tract ID. 
 
-    acs = get_census_data()
-    geo = get_geodata(landuse_filepath, tract_filepath)
-    geo.rename(cols={'TRACTCE': 'tract'})
+    Returns: 
+        Merged ACS-LUI data where each row is a land parcel
 
-    merged_df = pd.merge(acs, geo, on='tract', how='inner')
-
-    return merged_df
-
-    acs_data = acs.get_census_data()
-    land_data = geospatial.get_geodata()
-    merge_keys = json.load("../../../../landuse_census_linked.json")
     """
+    
+    # load ACS data
+    acs_data = acs.get_census_data(CENSUS_KEY)
+
+    # rename tracts in ACS data so it matches LUI data
+    acs_data = acs_data.rename(columns={"tract" : "census_tract_id"})
+    
+    # load LUI data
+    land_data = pd.read_pickle(lui_file_path)
+
+    # do an "inner" merge
+    land_acs_merged = pd.merge(land_data, acs_data, on="census_tract_id", how="inner")
+    
+    
+    return land_acs_merged
+
+# EDA
+# data = merge_data()
+# print(data[['census_tract_id', 'LANDUSE', 'Shape__Area', 'median_hh_income', 'tot_pop']].head())
+
+
+
+
+
+
+
+
+
