@@ -20,6 +20,7 @@ dependencies = [
     "httpx>=0.28.1",
     "mapclassify>=2.8.1",
     "folium>=0.19.5",
+    "ruff>=0.6.4",
 ]
 
 [build-system]
