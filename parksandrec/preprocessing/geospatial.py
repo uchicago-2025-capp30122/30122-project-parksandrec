@@ -1,7 +1,6 @@
 import geopandas as gpd
-from shapely import Polygon
-from pathlib import Path
-import pickle
+#from shapely import Polygon
+#from pathlib import Path
 
 def get_geodata(landuse_path, tract_path):
     # Load as geopandas
@@ -50,5 +49,5 @@ def get_geodata(landuse_path, tract_path):
     # Drop all those None values in the same df
     cook_landuse.dropna(subset=['census_tract_id'], how='all', inplace=True)
 
-    # Pickle !
+    # Save locally to prevent repeating this process
     cook_landuse.to_pickle("parcel_tract_linked.pkl")
