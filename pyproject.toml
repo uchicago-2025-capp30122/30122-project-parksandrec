@@ -1,5 +1,5 @@
 [project]
-name = "30122-project-parksandrec"
+name = "parksandrec"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -20,5 +20,18 @@ dependencies = [
     "httpx>=0.28.1",
     "mapclassify>=2.8.1",
     "folium>=0.19.5",
+    "ruff>=0.6.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors - handles basic Python style
+  "W", # pycodestyle warnings - handles whitespace issues
+  "F", # pyflakes - handles unused imports and variables
+  "N", # pep8-naming - handles naming conventions
     "plotly>=6.0.0",
 ]
