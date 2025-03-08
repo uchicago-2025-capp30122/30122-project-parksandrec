@@ -39,11 +39,17 @@ def plot_landuse_map(df_path):
             gdf.loc[i, 'landuse_condendenced'] = 'Open Space_No Public'
         if parcel['LANDUSE'].startswith('35'):
             gdf.loc[i, 'landuse_condendenced'] = 'Greenway'
+        if parcel['LANDUSE'].startswith('411'):
+            gdf.loc[i, 'landuse_condendenced'] = 'Vacant'
+        if parcel['LANDUSE'].startswith('412'):
+            gdf.loc[i, 'landuse_condendenced'] = 'Vacant'
+        if parcel['LANDUSE'].startswith('413'):
+            gdf.loc[i, 'landuse_condendenced'] = 'Vacant'
     
     # Define the specific categories and corresponding colors
     categories = ['Open Space_Recreation', 'Golf', 'Open Space_Conservation',
-                  'Open Space_No Public', 'Greenway']
-    colors = ['red', 'blue', 'green', 'orange', 'purple']
+                  'Open Space_No Public', 'Greenway', 'Vacant']
+    colors = ['#287E40', '#58a282', '#4f9153', '#ff7f0e', '#8ABC7C', 'yellow']
     
     # Convert the landuse column to a categorical type with the defined order
     gdf['landuse_condendenced'] = pd.Categorical(gdf['landuse_condendenced'], categories=categories)
@@ -66,7 +72,7 @@ def plot_landuse_map(df_path):
     ax.set_ylabel("Latitude")
     
     # Save the plot to a PNG file without displaying it
-    fig.savefig("color_landuse_map.png", dpi=300)
+    fig.savefig("color_landuse_map.html")
     plt.close(fig)
     
     return gdf
