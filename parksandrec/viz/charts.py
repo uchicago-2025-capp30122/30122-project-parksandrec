@@ -44,9 +44,6 @@ def plot_income_open_space(filter_col, inequality, threshold):
         '3200_prop': 'Golf Courses',
         '3300_prop': 'Conservation Areas',
         '3400_prop': 'Private Open Space',
-        '4110_prop': 'Vacant Residential Land',
-        '4120_prop': 'Vacant Commercial Land',
-        '4130_prop': 'Vacant Industrial Land'
     }
 
     threshold /= 100
@@ -76,11 +73,11 @@ def plot_income_open_space(filter_col, inequality, threshold):
     return figures"
     """
 
-def filter_by_threshold(df, filter_col='tot_open_space_prop', inequality_dir="<", threshold=0.01):
-    if inequality_dir == "<=":
-        return df[df[filter_col] < threshold]
-    elif inequality_dir == ">=":
-        return df[df[filter_col] > threshold]
+def filter_by_threshold(df, filter_col='tot_open_space_prop', inequality_dir="<", threshold=1):
+    if inequality_dir == "<":
+        return df[df[filter_col] <= threshold]
+    elif inequality_dir == ">":
+        return df[df[filter_col] >= threshold]
     elif inequality_dir == "=":
         return df[df[filter_col] == threshold]
 
