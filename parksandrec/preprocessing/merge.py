@@ -1,14 +1,15 @@
 import os
 import sys
 import pandas as pd
-import acs
-import geospatial
+from . import acs
+from . import geospatial
 import json
 import pickle
+import pygris
 from pathlib import Path
 
 current_filepath = Path(__file__).resolve()
-lui_file_path = current_filepath.parents[2] / "data" / "parcel_tract_linked_nona.pkl"
+lui_file_path = current_filepath.parents[3] / "data" / "parcel_tract_linked_nona.pkl"
 # lui_file_path = '../../../data/parcel_tract_linked_nona.pkl'
 
 CENSUS_KEY = os.getenv("CENSUS_KEY")
@@ -119,10 +120,10 @@ def collapse_tract():
     # calculate proportion of each land use type
 
     for lui in lu_codes:
-        lu_col = lui+"_prop"
+        lu_col = lui + "_prop"
         census_merged[lu_col] = census_merged[lui] / census_merged["tot_parcel_area"]
 
-    #print(census_merged.columns)
+    # print(census_merged.columns)
     # calculate total proportion of open spaces
     census_merged["tot_open_space_prop"] = (
         census_merged["3100_prop"]
@@ -136,9 +137,59 @@ def collapse_tract():
     open_space_prop = ["3100_prop", "3200_prop", "3300_prop", "3400_prop", "3500_prop"]
 
     for prop in open_space_prop:
-        new_col = prop+"_open"
+        new_col = prop + "_open"
         census_merged[new_col] = (
             census_merged[prop] / census_merged["tot_open_space_prop"]
         )
 
-    return census_merged
+    cols_to_keep = [
+        "NAME",
+        "owner_occ_units",
+        "renter_occ_units",
+        "med_val_own_occ",
+        "avg_hh_size",
+        "pop_25_ba",
+        "pop_25_hs",
+        "pop_disability",
+        "median_hh_income",
+        "tot_pop",
+        "white",
+        "black",
+        "native",
+        "asian",
+        "native_hawaiian",
+        "two_or_more_races",
+        "under_18",
+        "65_over",
+        "state",
+        "county",
+        "tract",
+        "18_64",
+        "tot_parcel_area",
+        "3100_prop",
+        "3200_prop",
+        "3300_prop",
+        "3400_prop",
+        "3500_prop",
+        "tot_open_space_prop",
+        "3100_prop_open",
+        "3200_prop_open",
+        "3300_prop_open",
+        "3400_prop_open",
+        "3500_prop_open",
+    ]
+
+    census_merged_fil = census_merged[cols_to_keep]
+
+    il_tracts = pygris.tracts(state="IL", county="031", year=2018, cb=True)
+    il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]
+
+    full_merge = pd.merge(
+        census_merged_fil,
+        il_tracts_fil,
+        left_on="tract",
+        right_on="TRACTCE",
+        how="inner"
+    )
+
+    return full_merge

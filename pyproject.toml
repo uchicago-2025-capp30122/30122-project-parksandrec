@@ -22,4 +22,16 @@ dependencies = [
     "folium>=0.19.5",
     "ruff>=0.6.4",
     "plotly>=6.0.0",
+    "dash>=2.18.2",
 ]
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors - handles basic Python style
+  "W", # pycodestyle warnings - handles whitespace issues
+  "F", # pyflakes - handles unused imports and variables
+  "N", # pep8-naming - handles naming conventions
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
