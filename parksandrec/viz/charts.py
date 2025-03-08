@@ -77,9 +77,9 @@ def plot_income_open_space(filter_col, inequality, threshold):
     """
 
 def filter_by_threshold(df, filter_col='tot_open_space_prop', inequality_dir="<", threshold=0.01):
-    if inequality_dir == "<":
+    if inequality_dir == "<=":
         return df[df[filter_col] < threshold]
-    elif inequality_dir == ">":
+    elif inequality_dir == ">=":
         return df[df[filter_col] > threshold]
     elif inequality_dir == "=":
         return df[df[filter_col] == threshold]
