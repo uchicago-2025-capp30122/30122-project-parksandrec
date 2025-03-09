@@ -1,11 +1,14 @@
 from dash import Dash, dcc, html, Input, Output, callback
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
+import plotly.express as px
 import json
 import geopandas as gpd
 from preprocessing.merge import collapse_tract
 from parksandrec.viz import charts
 
-app = Dash()
+app = Dash(__name__, external_stylesheets= [dbc.themes.COSMO])
+
 
 data_tract = collapse_tract()
 
@@ -15,31 +18,23 @@ geojson_data = json.loads(tract_geo['geometry'].to_json())
 
 tt_cols = tract_geo[['tract','tot_pop', 'avg_hh_size','median_hh_income', 'med_val_own_occ']]
 
-fig = go.Figure(
-    go.Choropleth(
+fig_choro = px.choropleth_map(
+        title = "Distribution of Open Space in Cook County by Census Tract",
+        subtitle = 'Percentage of Land Use assigned to Open Space - 2018',
+        data_frame = tract_geo,
         geojson=geojson_data,
         locations= tract_geo.index,
-        z= tract_geo['tot_open_space_prop'],
-        colorscale="Viridis",
-        zmin=tract_geo['tot_open_space_prop'].min(),
-        zmax=tract_geo['tot_open_space_prop'].max(),
-        marker_line_width=0,
-        customdata = tt_cols,
+        color =tract_geo["tot_open_space_prop"],
+        map_style = 'carto-voyager-nolabels',
+        zoom = 9,
+        color_continuous_scale= 'Viridis',
+        center = {'lat': 41.83167, 'lon':-87.67778},
+        opacity = 0.7,
+        custom_data = ['tract','tot_pop', 'avg_hh_size','median_hh_income', 'med_val_own_occ'],
+        labels = {'tot_open_space_prop': "Proportion of open space"},
     )
-)
 
-fig.update_geos(fitbounds="locations", visible=False)
-fig.update_layout(
-    autosize=True,
-    geo=dict(
-        visible=False,
-        showsubunits=True,
-        showcountries=False
-    ),
-    dragmode="zoom",
-
-)
-fig.update_traces(
+fig_choro.update_traces(
     hovertemplate =
     "ID: %{customdata[0]}<br>" +
     "Population: %{customdata[1]:,.0f}<br>" + 
@@ -50,21 +45,25 @@ fig.update_traces(
     "<extra></extra>"
 )
 
+fig_choro.update_layout(coloraxis=dict(colorbar=dict(orientation='h', y=-0.20)))
+
 default_graph = charts.plot_income_open_space('tot_open_space_prop', '<', 0.01)
 
 app.layout = [
     html.Div([
-        html.H1("Distribution of Open Space in Cook County by Census Tract"),
         dcc.Graph(
             id='choropleth-map',
-            figure=fig,
+            figure=fig_choro,
             style={
-                'height': '80vh', 
-                'width': '100%'    
+                'height': '90vh',
+                'width': '60%'
+            },
+            config={
+                'displayModeBar': False
             }
         )
     ]),
-
+    html.Br(),
     html.Div([
         html.Label("Enter open space type: "),
         dcc.Dropdown(
@@ -80,6 +79,7 @@ app.layout = [
                 '4130_prop': 'Vacant Industrial Land'},
             value = 'tot_open_space_prop'
         ),
+        html.Br(),
         html.Label("Enter inequality direction: "),
         dcc.RadioItems(
             id = 'direction-radio-button',
@@ -89,10 +89,12 @@ app.layout = [
             ],
             value = '<'
         ),
+        html.Br(),
         html.Label("Threshold (percent): "),
+        html.Br(),
         dcc.Input(type='number', id='threshold-input', value=10),
         dcc.Graph(figure=default_graph, id='income-graph')
-    ])
+    ], style={'padding': '0px 20px 20px 20px'})
 ]
 
 @callback(

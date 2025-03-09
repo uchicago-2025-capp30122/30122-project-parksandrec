@@ -1,8 +1,9 @@
 import os
 import sys
 import pandas as pd
-import preprocessing.acs as acs
-import preprocessing.geospatial as geospatial
+import geopandas as gpd
+import parksandrec.preprocessing.acs as acs
+import parksandrec.preprocessing.geospatial as geospatial
 import json
 import pickle
 import pygris
@@ -185,10 +186,10 @@ def collapse_tract():
     il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]
 
     full_merge = pd.merge(
-        census_merged_fil,
         il_tracts_fil,
-        left_on="tract",
-        right_on="TRACTCE",
+        census_merged_fil,
+        left_on="TRACTCE",
+        right_on="tract",
         how="inner"
     )
 

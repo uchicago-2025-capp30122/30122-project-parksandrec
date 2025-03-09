@@ -273,6 +273,33 @@ wheels = [
 ]
 
 [[package]]
+name = "dash-bootstrap-components"
+version = "1.7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/68/fa/f702d729a4b788293b796dc92f3d529909641de1e2e13f967211169b807a/dash_bootstrap_components-1.7.1.tar.gz", hash = "sha256:30d48340d6dc89831d6c06e400cd4236f0d5363562c05b2a922f21545695a082", size = 136579 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/87/4db3b56e9a6813d413a0f20e053aa163d652babb629a8bf7b871af4a075f/dash_bootstrap_components-1.7.1-py3-none-any.whl", hash = "sha256:5e8eae7ee1d013f69e272c68c1015b53ab71802460152088f33fffa90d245199", size = 229294 },
+]
+
+[[package]]
+name = "dash-bootstrap-templates"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+    { name = "dash-bootstrap-components" },
+    { name = "numpy" },
+    { name = "plotly" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/09/2a/5b109ee6aea69deef649a038147dc1696f6d4152de912315a946ee243640/dash_bootstrap_templates-2.1.0.tar.gz", hash = "sha256:ca9da1060ee2b2c74dc1c26119056f37051a838a58ea07b5d325f9df7fde17fe", size = 114447 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/f7/94fff8c10b57d47311c9d9e9a6b98618f1dcad77ae3fbd7e0659230c04ae/dash_bootstrap_templates-2.1.0-py3-none-any.whl", hash = "sha256:d7a89ce5d1cfec205bff2ec621a8a6382f287eea064917909475477fb32c09d6", size = 100293 },
+]
+
+[[package]]
 name = "dash-core-components"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -880,6 +907,7 @@ dependencies = [
     { name = "altair" },
     { name = "census" },
     { name = "dash" },
+    { name = "dash-bootstrap-templates" },
     { name = "fiona" },
     { name = "folium" },
     { name = "geopandas" },
@@ -902,6 +930,7 @@ requires-dist = [
     { name = "altair", specifier = ">=5.5.0" },
     { name = "census", specifier = ">=0.8.23" },
     { name = "dash", specifier = ">=2.18.2" },
+    { name = "dash-bootstrap-templates", specifier = ">=2.1.0" },
     { name = "fiona", specifier = ">=1.10.1" },
     { name = "folium", specifier = ">=0.19.5" },
     { name = "geopandas", specifier = ">=1.0.1" },
