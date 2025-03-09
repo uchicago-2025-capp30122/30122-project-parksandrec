@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output, callback
+from dash import Dash, dash_table, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import plotly.express as px
@@ -61,6 +61,13 @@ app.layout = [
             config={
                 'displayModeBar': False
             }
+        ),
+
+        html.Div(
+            dash_table.DataTable(
+                id='race-table',
+                data=[]
+            )
         )
     ]),
     html.Br(),
@@ -94,8 +101,31 @@ app.layout = [
         html.Br(),
         dcc.Input(type='number', id='threshold-input', value=10),
         dcc.Graph(figure=default_graph, id='income-graph')
-    ], style={'padding': '0px 20px 20px 20px'})
+    ], style={'padding': '0px 20px 20px 20px'}),
+    
+    html.Div([
+        html.H2('<Insert title for Landuse graph>'),
+        html.Br(),
+        html.Img(src=app.get_asset_url('landuse_map.png'), style={'height':'30%', 'width': '60%'}),
+        html.Br()
+    ])
+   
 ]
+
+@callback(
+    Output(component_id='race-table', component_property='data'),
+    Input(component_id='choropleth-map', component_property='clickData')
+)
+def render_race_table(clickData):
+    if not clickData:
+        return []
+    
+    tract_id = clickData['points'][0]['location']
+    tract_info = data_tract[data_tract['TRACTCE'] == tract_id]
+    print(tract_info)
+
+    return tract_info[['white', 'black']].to_dict('records')
+    #return json.dumps([tract_info['white'], tract_info['black']])
 
 @callback(
     Output(component_id='income-graph', component_property='figure'),
