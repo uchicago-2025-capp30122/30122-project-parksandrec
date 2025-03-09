@@ -1,22 +1,20 @@
 import os
-import sys
 import pandas as pd
-from . import acs
-from . import geospatial
-import json
-import pickle
+import parksandrec.preprocessing.acs as acs
 import pygris
 from pathlib import Path
 
 current_filepath = Path(__file__).resolve()
-lui_file_path = current_filepath.parents[3] / "data" / "parcel_tract_linked_nona.pkl"
-# lui_file_path = '../../../data/parcel_tract_linked_nona.pkl'
+lui_file_path = current_filepath.parents[2] / "data" / "parcel_tract_linked_nona.pkl"
 
 CENSUS_KEY = os.getenv("CENSUS_KEY")
 
 
 def merge_data():
     """
+
+    DEPRECATED
+
     Merges the ACS socio-demographic data with the LUI on the census
     tract ID.
 
@@ -25,7 +23,7 @@ def merge_data():
 
     """
     # load ACS data
-    acs_data = acs.get_census_data(CENSUS_KEY)
+    acs_data = acs.acs_clean(CENSUS_KEY)
 
     # rename tracts in ACS data so it matches LUI data
     acs_data = acs_data.rename(columns={"tract": "census_tract_id"})
@@ -40,20 +38,34 @@ def merge_data():
 
 
 def collapse_tract():
-    """ """
-    land_data = pd.read_pickle(lui_file_path)
+    """
+    Create a tract-level datataset with open space metrics and merge it with
+    sociodemographic data from ACS and geospatial objects from pygris.
+
+    Inputs:
+        None. All dataset iputs are loaded from other functions.
+
+    Returns:
+        full_merge (GeoDataFrame): geodataframe containing census-tract level
+        metrics on open space (LUI), sociodemographics (ACS) and geometry objects
+        (pygris)
+    """
+    lui_data = pd.read_pickle(lui_file_path)
     acs_data = acs.get_census_data(CENSUS_KEY)
 
-    data_tract = (
-        land_data.groupby(["census_tract_id", "LANDUSE"])["Shape__Area"]
-        .sum()
-        .reset_index()
-        .pivot(index="census_tract_id", columns=("LANDUSE"), values="Shape__Area")
-        .fillna(0)
+    il_tracts = pygris.tracts(state="IL", county="031", year=2018, cb=True)
+    il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]
+
+    lui_tract = lui_data.pivot_table(
+        index="census_tract_id",
+        columns="LANDUSE",
+        values="Shape__Area",
+        aggfunc="sum",
+        fill_value=0,
     )
 
     census_merged = pd.merge(
-        data_tract, acs_data, left_on="census_tract_id", right_on="tract", how="inner"
+        lui_tract, acs_data, left_on="census_tract_id", right_on="tract", how="inner"
     )
 
     lu_codes = [
@@ -123,7 +135,7 @@ def collapse_tract():
         lu_col = lui + "_prop"
         census_merged[lu_col] = census_merged[lui] / census_merged["tot_parcel_area"]
 
-    # print(census_merged.columns)
+
     # calculate total proportion of open spaces
     census_merged["tot_open_space_prop"] = (
         census_merged["3100_prop"]
@@ -181,15 +193,12 @@ def collapse_tract():
 
     census_merged_fil = census_merged[cols_to_keep]
 
-    il_tracts = pygris.tracts(state="IL", county="031", year=2018, cb=True)
-    il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]
-
     full_merge = pd.merge(
-        census_merged_fil,
         il_tracts_fil,
-        left_on="tract",
-        right_on="TRACTCE",
-        how="inner"
+        census_merged_fil,
+        left_on="TRACTCE",
+        right_on="tract",
+        how="inner",
     )
 
     return full_merge
