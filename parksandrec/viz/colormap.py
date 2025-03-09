@@ -30,15 +30,15 @@ def plot_landuse_map(df_path):
     # Update the landuse_condendenced column based on the LANDUSE values
     for i, parcel in gdf.iterrows():
         if parcel['LANDUSE'].startswith('31'):
-            gdf.loc[i, 'landuse_condendenced'] = 'Open Space_Recreation'
+            gdf.loc[i, 'landuse_condendenced'] = 'Recreational spaces'
         if parcel['LANDUSE'].startswith('32'):
-            gdf.loc[i, 'landuse_condendenced'] = 'Golf'
+            gdf.loc[i, 'landuse_condendenced'] = 'Golf courses '
         if parcel['LANDUSE'].startswith('33'):
-            gdf.loc[i, 'landuse_condendenced'] = 'Open Space_Conservation'
+            gdf.loc[i, 'landuse_condendenced'] = 'Conservation areas'
         if parcel['LANDUSE'].startswith('34'):
-            gdf.loc[i, 'landuse_condendenced'] = 'Open Space_No Public'
+            gdf.loc[i, 'landuse_condendenced'] = 'Non-public spaces'
         if parcel['LANDUSE'].startswith('35'):
-            gdf.loc[i, 'landuse_condendenced'] = 'Greenway'
+            gdf.loc[i, 'landuse_condendenced'] = 'Trails or greenways'
         if parcel['LANDUSE'].startswith('411'):
             gdf.loc[i, 'landuse_condendenced'] = 'Vacant'
         if parcel['LANDUSE'].startswith('412'):
@@ -47,8 +47,8 @@ def plot_landuse_map(df_path):
             gdf.loc[i, 'landuse_condendenced'] = 'Vacant'
     
     # Define the specific categories and corresponding colors
-    categories = ['Open Space_Recreation', 'Golf', 'Open Space_Conservation',
-                  'Open Space_No Public', 'Greenway', 'Vacant']
+    categories = ['Recreational spaces', 'Golf courses ', 'Conservation areas',
+                  'Non-public open spaces', 'Trails or greenways', 'Vacant']
     colors = ['#287E40', '#58a282', '#4f9153', '#ff7f0e', '#8ABC7C', 'yellow']
     
     # Convert the landuse column to a categorical type with the defined order
@@ -64,17 +64,16 @@ def plot_landuse_map(df_path):
              legend=True,
              ax=ax,
              cmap=cmap,
-             missing_kwds={'color': 'gray'},  # Missing values will be gray.
-             legend_kwds={'fontsize': 20, 'title_fontsize': 30})
+             missing_kwds={'color': 'gray', 'label':'No Open space'},  # Missing values will be gray.
+             legend_kwds={'fontsize': 18, 'title_fontsize': 30})
     
     ax.set_title("Map Colored by LANDUSE")
     ax.set_xlabel("Longitude")
     ax.set_ylabel("Latitude")
     
     # Save the plot to a PNG file without displaying it
-    fig.savefig("color_landuse_map.html")
-    plt.close(fig)
-    
-    return gdf
+    fig.savefig("color_landuse_map.png")
 
-gdf_processed = plot_landuse_map('/Users/chemagalvez/Downloads/parcel_tract_linked_nona.pkl')
+    return fig
+
+plot_landuse_map('/Users/chemagalvez/Downloads/parcel_tract_linked_nona.pkl')
