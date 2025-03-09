@@ -125,7 +125,6 @@ def render_race_table(clickData):
     print(tract_info)
 
     return tract_info[['white', 'black']].to_dict('records')
-    #return json.dumps([tract_info['white'], tract_info['black']])
 
 @callback(
     Output(component_id='income-graph', component_property='figure'),
