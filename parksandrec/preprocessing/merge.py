@@ -23,7 +23,7 @@ def merge_data():
 
     """
     # load ACS data
-    acs_data = acs.get_census_data(CENSUS_KEY)
+    acs_data = acs.acs_clean(CENSUS_KEY)
 
     # rename tracts in ACS data so it matches LUI data
     acs_data = acs_data.rename(columns={"tract": "census_tract_id"})
