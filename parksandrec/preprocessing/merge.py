@@ -5,7 +5,7 @@ import pygris
 from pathlib import Path
 
 current_filepath = Path(__file__).resolve()
-lui_file_path = current_filepath.parents[3] / "data" / "parcel_tract_linked_nona.pkl"
+lui_file_path = current_filepath.parents[2] / "data" / "parcel_tract_linked_nona.pkl"
 
 CENSUS_KEY = os.getenv("CENSUS_KEY")
 

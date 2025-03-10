@@ -65,7 +65,7 @@ intro = dcc.Markdown(
 
 ##### Open space can mean parks, trails and conservation areas, which are desirable for recreation, leisure, and weather regulation. However, it can also mean fallow and underdeveloped lands, which could indicate a lack of investment in built up area and infrastructure. The distribution of such spaces can be determined by socioeconomic factors like neighborhood household incomes, race, and age.
 
-##### `ParksAndRec` aggregates the open space in Chicago at the Census tract level and allows you to explore spatial and statistical data to draw inferences about these correlations.
+##### `ParksAndRec` aggregates the open space in Chicago at the Census tract level and allows you to explore spatial and statistical data to draw inferences about these correlations in 2018.
     """
 )
 graph1_body = dcc.Markdown(
@@ -105,22 +105,37 @@ This tool allows researchers and policymakers to understand how the distribution
 """
 )
 
+about_body = dcc.Markdown(
+    '''
+Contributors:
+
+- Sarah Hussain
+- Raghav Mehrotra
+- Jose Maria (Chema) Galvez
+- Pablo Hernandez
+'''
+)
+
 graph1_card = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H3("Where is the open space in Cook County?", className="card-title"),
-            html.H5(graph1_body, className="card-text"),
-        ]
-    )
+    [
+        dbc.CardHeader(html.H3("Where is the open space in Cook County?")),
+        dbc.CardBody(
+            [
+                html.H5(graph1_body, className="card-text"),
+            ]
+        ),
+    ]
 )
 
 graph3_card = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H3("Toggle open spaces to understand income!", className="card-title"),
-            html.H5(graph3_body, className="card-text"),
-        ]
-    )
+    [
+        dbc.CardHeader(html.H3("Toggle open spaces to understand income!")),
+        dbc.CardBody(
+            [
+                html.H5(graph3_body, className="card-text"),
+            ]
+        ),
+    ]
 )
 
 tab1_content = html.Div(
@@ -131,7 +146,7 @@ tab1_content = html.Div(
                     [
                         graph1_card,
                     ],
-                    width=3,
+                    width=5,
                 ),
                 dbc.Col(
                     html.Img(
@@ -144,29 +159,48 @@ tab1_content = html.Div(
                             "margin": "0 auto",
                         },
                     ),
-                    width=9,
+                    width=7,
                 ),
             ]
         )
     ],
-    style={"margin": "10px", "padding": "20px"},
+    style={"margin": "10px"},
 )
 
 tab2_content = html.Div(
     [
         html.Div(
-            graph2_body,
-            style={"margin": "10px", "backgroundColor": "lightgray", "padding": "20px"},
+            html.H5(graph2_body),
+            style={"margin": "10px"},
         ),
-        html.Div(
+        dbc.Row(
             [
-                dcc.Graph(
-                    id="choropleth-map",
-                    figure=fig_choro,
-                    style={"height": "90vh", "width": "60%"},
-                    config={"displayModeBar": False},
+                dbc.Col(
+                    dcc.Graph(
+                        id="choropleth-map",
+                        figure=fig_choro,
+                        style={"height": "90vh"},
+                        config={"displayModeBar": False},
+                    ),
+                    width=8,
                 ),
-                html.Div(dash_table.DataTable(id="race-table", data=[])),
+                dbc.Col(
+                    [
+                        html.Br(),
+                        html.Br(),
+                        html.H5(id="selected_tract", children="None selected"),
+                        dash_table.DataTable(
+                            id="race-table",
+                            data=[],
+                            style_cell={
+                                "fontFamily": "sans-serif",
+                                "fontSize": "16px",
+                                "textAlign": "left",
+                            },
+                        ),
+                    ],
+                    width=4,
+                ),
             ]
         ),
     ]
@@ -176,7 +210,7 @@ tab3_content = html.Div(
     [
         dbc.Row(
             [
-                dbc.Col([graph3_card], width=3),
+                dbc.Col([graph3_card], width=5),
                 dbc.Col(
                     [
                         html.Label("Enter open space type: "),
@@ -207,7 +241,7 @@ tab3_content = html.Div(
                         dcc.Input(type="number", id="threshold-input", value=10),
                         dcc.Graph(figure=default_graph, id="income-graph"),
                     ],
-                    width=9,
+                    width=7,
                     style={"padding": "0px 20px 20px 20px"},
                 ),
             ]
@@ -251,24 +285,57 @@ app.layout = [
                 tab_id="stats",
                 style={"margin": "10px", "padding": "20px"},
             ),
-            dbc.Tab(label = "About")
-        ]
+            dbc.Tab(
+                html.Div(
+                    about_body,
+                    style={
+                        "margin": "10px",
+                        "padding": "20px",
+                    },
+                ),
+                label="About",
+            ),
+        ],
+        style={"margin": "10px"},
     ),
 ]
 
 
 @callback(
+    Output(component_id="selected_tract", component_property="children"),
     Output(component_id="race-table", component_property="data"),
     Input(component_id="choropleth-map", component_property="clickData"),
 )
 def render_race_table(clickData):
     if not clickData:
-        return []
+        return " ", []
 
     tract_id = clickData["points"][0]["customdata"][0]
+
+    tract_header = f"Demographic Composition of Tract {tract_id}"
+
     tract_info = data_tract[data_tract["TRACTCE"] == tract_id]
 
-    return tract_info[["white", "black"]].to_dict("records")
+    info_long = tract_info[
+        ["white", "black", "native", "asian", "native_hawaiian", "two_or_more_races"]
+    ].melt(var_name="Race", value_name="Percentage")
+
+    info_long = info_long[info_long["Percentage"] > 0]
+
+    labels = {
+        "white": "White",
+        "black": "Black or African American",
+        "native": "American Indian or Alaska Native",
+        "asian": "Asian",
+        "native_hawaiian": "Native Hawaiian or Other Pacific Islander",
+        "two_or_more_races": "Two or More Races*",
+    }
+
+    info_long["Race"] = info_long["Race"].map(labels)
+
+    info_long = info_long.sort_values(by="Percentage", ascending=False)
+
+    return tract_header, info_long.to_dict("records")
 
 
 @callback(
