@@ -136,4 +136,4 @@ def update_income_graph(open_space_col, inequality_dir, threshold):
     return charts.plot_income_open_space(open_space_col, inequality_dir, threshold)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port = 8080)
