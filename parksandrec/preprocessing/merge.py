@@ -51,7 +51,7 @@ def collapse_tract():
         (pygris)
     """
     lui_data = pd.read_pickle(lui_file_path)
-    acs_data = acs.get_census_data(CENSUS_KEY)
+    acs_data = acs.acs_clean(CENSUS_KEY)
 
     il_tracts = pygris.tracts(state="IL", county="031", year=2018, cb=True)
     il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]

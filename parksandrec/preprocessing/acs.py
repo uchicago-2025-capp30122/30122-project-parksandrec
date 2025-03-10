@@ -1,9 +1,6 @@
 from census import Census
 from us import states
 import pandas as pd
-import os
-
-CENSUS_KEY = os.getenv("CENSUS_KEY")
 
 # variables of interest 
 vars = (
@@ -72,12 +69,37 @@ def get_census_data(key, year = 2018, vars = vars):
                              'DP05_0029PE': '65_over',
                              }, 
                              inplace = True)
+   return data_pd
+
+
+   
+
+def acs_clean(key):
+   """
+   Cleans and preprocesses queried ACS data by handling negative values 
+   and creating percentage-based variables of age categories. 
+
+   Paramaters: 
+    - key (str): The API key required to access the ACS data
+
+    Returns: 
+    - pd.DataFrame: A cleaned DataFrame with adjusted values and new percentage columns.
+
+   """
+
+   acs_data = get_census_data(key)
+
    
    # convert values in age categories to percentages instead of whole numbers
-   data_pd['65_over'] = data_pd['65_over']/data_pd['tot_pop']*100
-   data_pd["18_64"] = 100 - (data_pd["under_18"] + data_pd["65_over"])
+   acs_data['65_over'] = acs_data['65_over']/acs_data['tot_pop']*100
 
-   # replace negative values for int type columns to 0 (negative values a code for missingness)
+   # generate age category 18-64 by subtracting the sum of the under-18 and 65+ age groups
+   # from 100%
+   acs_data["18_64"] = 100 - (acs_data["under_18"] + acs_data["65_over"])
+
+   # replace negative values for int type columns to 0 
+   # (negative values a code for missingness)
+
    int_cols = [
       "owner_occ_units",
       "renter_occ_units",
@@ -98,6 +120,8 @@ def get_census_data(key, year = 2018, vars = vars):
       "65_over",
       "18_64"
       ]
-   data_pd[int_cols] = data_pd[int_cols].clip(lower = 0)
+   
+   # change all integer values below 0 to be set to 0
+   acs_data[int_cols] = acs_data[int_cols].clip(lower = 0)
 
-   return data_pd
+   return acs_data
