@@ -93,6 +93,8 @@ The **Chicago Metropolitan Agency for Planning (CMAP)** categorizes open spaces 
 
 Explore the map to see the concentration of open spaces in different areas. Simply hover over a census tract to reveal details such as the proportion of land dedicated to open space and key demographic indicators of the local population.
 
+Click on a tract to view its race composition.
+
 """
 )
 
