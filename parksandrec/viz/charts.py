@@ -46,38 +46,16 @@ def plot_income_open_space(filter_col, inequality, threshold):
         '3400_prop': 'Private Open Space',
     }
 
-    threshold /= 100
+    threshold = threshold/100 if threshold else 0
     filtered_df = filter_by_threshold(collapsed_data, filter_col, inequality, threshold)
     graph_title = "Median HH income distribution for census tracts with " + inequalities[inequality] + " " + str(threshold*100) + "% " + open_space_types[filter_col]
     return plot_income_dist(filtered_df, 'income_bins', all_income_bins, max_y, graph_title)
 
-    """
-    # 1. The initial income distribution for reference
-    figures.append(plot_income_dist(collapsed_data, 'income_bins', all_income_bins, max_y, 
-                      'Median HH income distribution in Cook County'))
-    
-    # 2. What is the income distribution of tracts with less than 1% open space?
-    little_open_space = filter_by_threshold(collapsed_data, "tot_open_space_prop", "<", 0.01)
-    figures.append(plot_income_dist(little_open_space, 'income_bins', all_income_bins, max_y,
-                      "Median HH income distribution for census tracts with less than 1% Open Space"))
-    
-    # 3. What is the income distribution of tracts with over 10% open space?
-    lots_open_space = filter_by_threshold(collapsed_data, "tot_open_space_prop", ">", 0.1)
-    figures.append(plot_income_dist(lots_open_space, 'income_bins', all_income_bins, max_y,
-                      "Median HH income distribution for census tracts with over 10% open space"))
-
-    # 4. What is the income distribution of tracts with golf courses?
-    golf = filter_by_threshold(collapsed_data, "3200_prop", ">", 0)
-    figures.append(plot_income_dist(golf, 'income_bins', all_income_bins, max_y,
-                      "Median HH income distribution for census tracts with at least one golf course"))
-    return figures"
-    """
-
 def filter_by_threshold(df, filter_col='tot_open_space_prop', inequality_dir="<", threshold=1):
     if inequality_dir == "<":
-        return df[df[filter_col] <= threshold]
+        return df[df[filter_col] < threshold]
     elif inequality_dir == ">":
-        return df[df[filter_col] >= threshold]
+        return df[df[filter_col] > threshold]
     elif inequality_dir == "=":
         return df[df[filter_col] == threshold]
 

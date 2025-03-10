@@ -188,9 +188,6 @@ tab3_content = html.Div(
                                 "3200_prop": "Golf Courses",
                                 "3300_prop": "Conservation Areas",
                                 "3400_prop": "Private Open Space",
-                                "4110_prop": "Vacant Residential Land",
-                                "4120_prop": "Vacant Commercial Land",
-                                "4130_prop": "Vacant Industrial Land",
                             },
                             value="tot_open_space_prop",
                         ),
@@ -268,9 +265,8 @@ def render_race_table(clickData):
     if not clickData:
         return []
 
-    tract_id = clickData["points"][0]["location"]
+    tract_id = clickData["points"][0]["customdata"][0]
     tract_info = data_tract[data_tract["TRACTCE"] == tract_id]
-    print(tract_info)
 
     return tract_info[["white", "black"]].to_dict("records")
 
