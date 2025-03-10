@@ -7,4 +7,6 @@ def test_geodf():
     test_df = collapse_tract()
     print(type(test_df))
     assert isinstance(test_df, gpd.GeoDataFrame)
+    for tract in test_df:
+        print(tract)
 

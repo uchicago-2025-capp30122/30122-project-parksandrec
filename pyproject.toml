@@ -24,6 +24,7 @@ dependencies = [
     "plotly>=6.0.0",
     "dash>=2.18.2",
     "dash-bootstrap-templates>=2.1.0",
+    "pytest>=8.3.5",
 ]
 [tool.ruff.lint]
 select = [
