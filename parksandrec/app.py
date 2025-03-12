@@ -108,14 +108,14 @@ This tool allows researchers and policymakers to understand how the distribution
 )
 
 about_body = dcc.Markdown(
-    '''
+    """
 Contributors:
 
 - Sarah Hussain
 - Raghav Mehrotra
 - Jose Maria (Chema) Galvez
 - Pablo Hernandez
-'''
+"""
 )
 
 graph1_card = dbc.Card(
@@ -319,7 +319,15 @@ def render_race_table(clickData):
     tract_info = data_tract[data_tract["TRACTCE"] == tract_id]
 
     info_long = tract_info[
-        ["white", "black", "native", "asian", "native_hawaiian", "other_race", "two_or_more_races"]
+        [
+            "white",
+            "black",
+            "native",
+            "asian",
+            "native_hawaiian",
+            "other_race",
+            "two_or_more_races",
+        ]
     ].melt(var_name="Race", value_name="Percentage")
 
     info_long = info_long[info_long["Percentage"] > 0]

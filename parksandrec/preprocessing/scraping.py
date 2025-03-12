@@ -37,7 +37,7 @@ def write_geojson(filename, record_count=0, max_records=100000):
     assert record_count < max_records
 
     features = []
-    if record_count == 0: 
+    if record_count == 0:
         page_url = START_URL
     else:
         page_url = f"{START_URL}&resultOffset={record_count}"

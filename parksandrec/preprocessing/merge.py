@@ -135,7 +135,6 @@ def collapse_tract():
         lu_col = lui + "_prop"
         census_merged[lu_col] = census_merged[lui] / census_merged["tot_parcel_area"]
 
-
     # calculate total proportion of open spaces
     census_merged["tot_open_space_prop"] = (
         census_merged["3100_prop"]
@@ -170,7 +169,7 @@ def collapse_tract():
         "native",
         "asian",
         "native_hawaiian",
-        'other_race',
+        "other_race",
         "two_or_more_races",
         "under_18",
         "65_over",
