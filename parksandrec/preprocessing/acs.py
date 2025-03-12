@@ -26,7 +26,6 @@ vars = (
 )
 
 
-
 def get_census_data(key, year = 2018, vars = vars):
    """
     Creates a Pandas DataFrame containing relevant American Community Survey (ACS) data, 

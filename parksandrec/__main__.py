@@ -14,4 +14,5 @@ def get_tract_lui_data():
     gdown.download(gdrive_url, "data/parcel_tract_linked.pkl", quiet = False)
 
 if __name__ == '__main__':
+    get_tract_lui_data()
     app.run_server(debug=True)
