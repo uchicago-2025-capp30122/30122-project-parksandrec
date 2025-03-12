@@ -15,4 +15,4 @@ def get_tract_lui_data():
 
 if __name__ == '__main__':
     get_tract_lui_data()
-    app.run_server(debug=True)
+    app.app.run_server(debug=True)
