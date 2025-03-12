@@ -28,8 +28,10 @@ def get_geodata_2018(landuse_path):
             if geom is None or geom.is_empty:
                 continue # If no geometry data, continue
             centroid = parcel['geometry'].centroid  # Compute centroid
-        except Exception as e:
-            continue # If something went wrong, just continue
+        except KeyError as e:
+            # Quit the program if a KeyError occurs. This could happen on the 
+            # 'geometry' key
+            print(f"A KeyError occured: {e}")
 
         match_found = False # Initiate to later check NAs
         for _, tract in cook_tracts.iterrows():
@@ -41,8 +43,10 @@ def get_geodata_2018(landuse_path):
                     cook_landuse.loc[index, 'census_tract_id'] = tract['TRACTCE']
                     match_found = True
                     break  # Exit loop once a match is found
-            except Exception as e:
-                continue
+            except KeyError as e:
+                # Quit the program if a KeyError occurs. This could happen on the 
+                # 'geometry' key
+                print(f"A KeyError occurred: {e}")
 
         # If no tract contains the centroid, assign a None value
         if not match_found:
@@ -57,12 +61,18 @@ def get_geodata_2018(landuse_path):
 
 def get_geodata_2013(landuse_path_1, landuse_path_2, tract_path):
     """
-    Stores the 
     The 2013 land use data was scraped using the code in scraping.py and stored
     locally. The scraping was done in batches and stored in two separate geojson
     files, which need to be merged. Moreover, this data does not have a COUNTYFP
     column and cannot be filtered for Cook County, which is why the code is
-    separeted here.
+    separated into a separate function.
+
+    Post computation, the data is stored locally in a pickle.
+
+    Arguments:
+        landuse_path_1: The filepath of the first batch of data scraped in scraping.py
+        landuse_path_2: The filepath of the second batch of data scraped in scraping.py
+        tract_path: The filepath of the geospatial data for the relevant census tracts
     """
 
     df_2013_p1 = gpd.read_file(landuse_path_1)
@@ -80,12 +90,6 @@ def get_geodata_2013(landuse_path_1, landuse_path_2, tract_path):
 
     df_landuse['census_tract_id'] = ''
 
-    print(df_landuse.head())
-
-    print ("------------\n\n\n\n")
-
-    print(cook_tracts.head())
-
     # Merge datasets
     count = 0
     for index, parcel in df_landuse.iterrows():
@@ -95,9 +99,8 @@ def get_geodata_2013(landuse_path_1, landuse_path_2, tract_path):
             if geom is None or geom.is_empty:
                 continue # If no geometry data, continue
             centroid = parcel['geometry'].centroid  # Compute centroid
-        except Exception as e:
-            print(e)
-            continue
+        except KeyError as e:
+            print(f"A KeyError occurred: {e}")
 
         match_found = False # Initiate to later check NAs
         for _, tract in cook_tracts.iterrows():
@@ -110,13 +113,9 @@ def get_geodata_2013(landuse_path_1, landuse_path_2, tract_path):
                     match_found = True
                     count += 1
                     break  # Exit loop once a match is found
-            except Exception as e:
-                print(e)
-                continue
+            except KeyError as e:
+                print(f"A KeyError occurred: {e}")
 
-        if count!= 0 and count % 10 == 0:
-            print(f"Found {count} matches")
-            print(df_landuse.head(count))
         # If no tract contains the centroid, assign a None value
         if not match_found:
             df_landuse.loc[index, 'census_tract_id'] = None
@@ -127,6 +126,3 @@ def get_geodata_2013(landuse_path_1, landuse_path_2, tract_path):
     # Save locally to prevent repeating this process
     pickle_name = "../../" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_linked_2013_data.pkl"
     df_landuse.to_pickle(pickle_name)
-
-#get_geodata_2013("../../data/lui2013_1.geojson", "../../data/lui2013_2.geojson",
-#                 "../../data/tl_2013_17_tract/tl_2013_17_tract.shp")
