@@ -11,6 +11,7 @@ def get_tract_lui_data():
     
     current_filepath = Path(__file__).resolve()
     output_filepath = str(current_filepath.parents[0] / "data/parcel_tract_linked.pkl")
+    print("The file is downloading at the following location:")
     print(output_filepath)
     file_id = "1Hbweu2_StECH6L4ZhOZ1TUtJYCEtRDxh"
     gdrive_url = f"https://drive.google.com/uc?id={file_id}"
