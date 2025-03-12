@@ -15,7 +15,7 @@ Next, clone the project or download it from [Github](https://github.com/uchicago
 
 Next, run `uv sync` to install all the dependencies for the project.
 
-In the parent folder of parksandrec, run the command `uv run python download.py`.
+In the parent folder of parksandrec, run the command `uv run python parksandrec/download.py`.
 
 You will see a progress bar that downloads a Pandas pickle data file (approx 280MB) from the cloud, which is the dataset that the project runs on. This is stored in a new folder parksandrec/data.
 
