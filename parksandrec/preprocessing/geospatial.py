@@ -77,7 +77,7 @@ def get_geodata_2018(landuse_path, tracts_dummy=None):
 
     # Save locally to prevent repeating this process
     current_filepath = Path(__file__).resolve()
-    pickle_name = current_filepath.parents[1] / "data" / "linked_2018_data.pkl"
+    pickle_name = current_filepath.parents[1] / "data" / "parcel_tract_linked.pkl"
     cook_landuse.to_pickle(pickle_name)
 
 
