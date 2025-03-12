@@ -1,40 +1,44 @@
-import altair as alt
-from vega_datasets import data
 import plotly.express as px
 from parksandrec.preprocessing import merge
 import pandas as pd
 
-from parksandrec.preprocessing.merge import merge_data
+def setup_data(collapsed_data):
+    """
+    Sets up the collapsed_data dataframe imported from merge.py. This function
+    is called once by the dashboard when it is first loaded. Storing the data
+    in the global space allows the app to repsond instantaneously to toggles and
+    filters that the user applies to the income tool.
 
-collapsed_data = merge.collapse_tract()
-# TODO: Remove this and add the cleanup code in the acs file
-collapsed_data = collapsed_data[collapsed_data["median_hh_income"] > 0]
+    Arguments:
+        collapsed_data: The dataframe returned by merge.collapse_tract()
+    
+    Returns:
+        collapsed_data: the dataframe prepared for use in the dashboard
 
-collapsed_data = collapsed_data.sort_values(by="median_hh_income")
-income_bins = [
-    min(collapsed_data["median_hh_income"]),
-    30000,
-    50000,
-    70000,
-    90000,
-    110000,
-    130000,
-    150000,
-    170000,
-    190000,
-    210000,
-    max(collapsed_data["median_hh_income"]),
-]
-collapsed_data["income_bins"], bins = pd.cut(
-    collapsed_data["median_hh_income"], income_bins, ordered=True, retbins=True
-)
-# Some values were converted to NANs, so we drop them
-collapsed_data = collapsed_data.dropna(subset=["income_bins"])
-collapsed_data["income_bins"] = collapsed_data["income_bins"].astype(str)
-
-# Prepare data for the plot
-max_y = collapsed_data["income_bins"].value_counts().max()
-all_income_bins = collapsed_data["income_bins"].unique()
+    """
+    collapsed_data = collapsed_data[collapsed_data["median_hh_income"] > 0]
+    collapsed_data = collapsed_data.sort_values(by="median_hh_income")
+    income_bins = [
+        min(collapsed_data["median_hh_income"]),
+        30000,
+        50000,
+        70000,
+        90000,
+        110000,
+        130000,
+        150000,
+        170000,
+        190000,
+        210000,
+        max(collapsed_data["median_hh_income"]),
+    ]
+    collapsed_data["income_bins"], _ = pd.cut(
+        collapsed_data["median_hh_income"], income_bins, ordered=True, retbins=True
+    )
+    # Some values were converted to NANs, so we drop them
+    collapsed_data = collapsed_data.dropna(subset=["income_bins"])
+    collapsed_data["income_bins"] = collapsed_data["income_bins"].astype(str)
+    return collapsed_data
 
 
 def plot_income_open_space(filter_col, inequality, threshold):
@@ -99,3 +103,15 @@ def plot_income_dist(df, x_var, index_on, max_y, graph_title):
     )
     fig.update_layout(yaxis=dict(range=[0, max_y]), xaxis=dict(tickangle=270))
     return fig
+
+# This code runs once when charts.py is first imported into the dashboard.
+# Setting up the data once as a global variable initially means that the data
+# does not have to be fetched, cleaned and processed with each toggle of the
+# dashboard and allows the user to see instantaneous updates instead.
+
+collapsed_data = merge.collapse_tract()
+collapsed_data = setup_data(collapsed_data)
+
+# Prepare data for the plot
+max_y = collapsed_data["income_bins"].value_counts().max()
+all_income_bins = collapsed_data["income_bins"].unique()
