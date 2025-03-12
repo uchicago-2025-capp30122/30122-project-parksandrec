@@ -1,6 +1,6 @@
 # parksAndRec: Understanding the Spatial and Demographic Distribution of Open Space in Chicago
 
-![parksAndRec landing page](assets/landing.png)
+![parksAndRec landing page](parksandrec/assets/landing.png)
 
 This project asks two questions: How is open space spatially distributed across Cook County? Who has access to these open spaces? 
 
