@@ -2,9 +2,10 @@ import geopandas as gpd
 from datetime import datetime
 import pandas as pd
 import pygris
+from pathlib import Path
 
 
-def get_geodata_2018(landuse_path):
+def get_geodata_2018(landuse_path, tracts_dummy=None):
     """
     Performs a geospatial link between land parcel and census tract data. Assigns
     the census tract that contains the centroid of a land parcel.
@@ -13,11 +14,17 @@ def get_geodata_2018(landuse_path):
 
     Arguments:
         landuse_path: The filepath of the file containing land parcel data
+        tracts_dummy: Variable to help with testing. Is not used in the function
+                      per se
     """
 
     # Load as geopandas
     landuse = gpd.read_file(landuse_path)
-    tracts = pygris.tracts(state="IL", county="Cook", year=2018, cb=True)
+
+    if tracts_dummy is not None:
+        tracts = tracts_dummy # Only for testng in tests/test_geospatial_join.py
+    else:
+        tracts = pygris.tracts(state="IL", county="Cook", year=2018, cb=True)
 
     # Drop columns not used for analysis. LANDUSE2 is the seondary land use type
     # but we are only focused on the LANDUSE primary land use type variable
@@ -69,11 +76,8 @@ def get_geodata_2018(landuse_path):
     cook_landuse.dropna(subset=["census_tract_id"], how="all", inplace=True)
 
     # Save locally to prevent repeating this process
-    pickle_name = (
-        "../../"
-        + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        + "_linked_2018_data.pkl"
-    )
+    current_filepath = Path(__file__).resolve()
+    pickle_name = current_filepath.parents[1] / "data" / "linked_2018_data.pkl"
     cook_landuse.to_pickle(pickle_name)
 
 
