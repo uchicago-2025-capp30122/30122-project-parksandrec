@@ -9,7 +9,7 @@ We use 2018 land use data from the [Chicago Metropolitan Agency for Planning](ht
 To understand who has access to open space (that falls within the five subcategories), we assign each land parcel from the spatial dataset to a census tract, and produce socio-demographic statistics at tract level. We downloaded census tract spatial data  from the pygris package and accessed statistical data on the tracts from the [American Community Survey API](https://www.census.gov/programs-surveys/acs/data/data-via-api.html). These include attributes such as median household income, race, and property values. In addition to this visual, we provide the user with an interactive tool that allows them to filter Cook County by specific land use area and understand how that impacts income distributions across Census tracts.
 
 ### Running the project
-First, make sure you have an API key(https://www.census.gov/data/developers/guidance/api-user-guide.Help_&_Contact_Us.html) from the Census. Once you have the key, type `CENSUS_KEY=”<your key>”` into the terminal, creating an OS variable that the parksandrec will use. To test whether it has been set correctly, type `echo $CENSUS_KEY` and you should see it display.
+First, make sure you have an [API key](https://www.census.gov/data/developers/guidance/api-user-guide.Help_&_Contact_Us.html) from the Census. Once you have the key, type `CENSUS_KEY=”<your key>”` into the terminal, creating an OS variable that the parksandrec will use. To test whether it has been set correctly, type `echo $CENSUS_KEY` and you should see it display.
 
 Next, clone the project or download it from [Github](https://github.com/uchicago-2025-capp30122/30122-project-parksandrec).
 
