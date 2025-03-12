@@ -170,6 +170,7 @@ def collapse_tract():
         "native",
         "asian",
         "native_hawaiian",
+        'other_race',
         "two_or_more_races",
         "under_18",
         "65_over",

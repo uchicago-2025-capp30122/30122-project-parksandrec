@@ -319,7 +319,7 @@ def render_race_table(clickData):
     tract_info = data_tract[data_tract["TRACTCE"] == tract_id]
 
     info_long = tract_info[
-        ["white", "black", "native", "asian", "native_hawaiian", "two_or_more_races"]
+        ["white", "black", "native", "asian", "native_hawaiian", "other_race", "two_or_more_races"]
     ].melt(var_name="Race", value_name="Percentage")
 
     info_long = info_long[info_long["Percentage"] > 0]
@@ -330,6 +330,7 @@ def render_race_table(clickData):
         "native": "American Indian or Alaska Native",
         "asian": "Asian",
         "native_hawaiian": "Native Hawaiian or Other Pacific Islander",
+        "other_race": "Some other race",
         "two_or_more_races": "Two or More Races*",
     }
 
