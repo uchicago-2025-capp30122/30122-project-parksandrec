@@ -2,6 +2,7 @@ import plotly.express as px
 from parksandrec.preprocessing import merge
 import pandas as pd
 
+
 def setup_data(collapsed_data):
     """
     Sets up the collapsed_data dataframe imported from merge.py. This function
@@ -11,7 +12,7 @@ def setup_data(collapsed_data):
 
     Arguments:
         collapsed_data: The dataframe returned by merge.collapse_tract()
-    
+
     Returns:
         collapsed_data: the dataframe prepared for use in the dashboard
 
@@ -80,15 +81,46 @@ def plot_income_open_space(filter_col, inequality, threshold):
 def filter_by_threshold(
     df, filter_col="tot_open_space_prop", inequality_dir="<", threshold=1
 ):
+    """
+    Helper function to display the income distribution tool on the dashboard
+
+    Arguments:
+        df: The dataframe to read from
+        filter_col: The type of open space to filter the distribution for.
+            Defaults to total open space
+        inequality_dir: less than or greater than. Defaults to less than
+        threshold: the percentage of open space area in a census tract to filter
+            for. Defaults to 1 percent.
+
+        Returns:
+            A filtered dataframe based on the inputs
+    """
+
     if inequality_dir == "<":
-        return df[df[filter_col] < threshold]
+        return df[df[filter_col] <= threshold]
     elif inequality_dir == ">":
-        return df[df[filter_col] > threshold]
+        return df[df[filter_col] >= threshold]
     elif inequality_dir == "=":
         return df[df[filter_col] == threshold]
 
 
 def plot_income_dist(df, x_var, index_on, max_y, graph_title):
+    """
+    A helper function to display the income distribution tool on the dashboard
+
+    Arguments:
+        df: The dataframe to use for the plot
+        x_var: The variable on the x-axis (here, median hh income bins)
+        index_on: The index for the df. Here, all median hh income bins for the
+            original df, including ones filtered out by filter_by_threshold
+        max_y: The maximum y value from the unfiltered dataset, to keep the graph
+            consistent
+        graph_title: The title of the plot that changes with the toggles on the
+            tool
+
+    Returns:
+        A Plotly figure to render on the dashboard
+    """
     counts = df[x_var].value_counts().reindex(index_on, fill_value=0)
     plot_df = pd.DataFrame({x_var: counts.index, "count": counts.values})
     fig = px.bar(
@@ -103,6 +135,7 @@ def plot_income_dist(df, x_var, index_on, max_y, graph_title):
     )
     fig.update_layout(yaxis=dict(range=[0, max_y]), xaxis=dict(tickangle=270))
     return fig
+
 
 # This code runs once when charts.py is first imported into the dashboard.
 # Setting up the data once as a global variable initially means that the data
