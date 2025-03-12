@@ -3,13 +3,12 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import plotly.express as px
 import json
-from preprocessing.merge import collapse_tract
+from parksandrec.preprocessing import merge
 from parksandrec.viz import charts
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
+dashboard = Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
 
-
-data_tract = collapse_tract()
+data_tract = merge.collapse_tract()
 
 geojson_data = json.loads(data_tract["geometry"].to_json())
 
@@ -152,7 +151,7 @@ tab1_content = html.Div(
                 ),
                 dbc.Col(
                     html.Img(
-                        src=app.get_asset_url("landuse_map.png"),
+                        src=dashboard.get_asset_url("landuse_map.png"),
                         style={
                             "width": "100%",
                             "height": "auto",
@@ -252,7 +251,7 @@ tab3_content = html.Div(
 )
 
 
-app.layout = [
+dashboard.layout = [
     html.Div(
         title,
         style={
@@ -360,4 +359,4 @@ def update_income_graph(open_space_col, inequality_dir, threshold):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8080)
+    dashboard.run_server(debug=True, port=8080)

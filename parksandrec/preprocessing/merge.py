@@ -4,9 +4,6 @@ import parksandrec.preprocessing.acs as acs
 import pygris
 from pathlib import Path
 
-current_filepath = Path(__file__).resolve()
-lui_file_path = current_filepath.parents[2] / "data" / "parcel_tract_linked_nona.pkl"
-
 CENSUS_KEY = os.getenv("CENSUS_KEY")
 
 
@@ -50,6 +47,9 @@ def collapse_tract():
         metrics on open space (LUI), sociodemographics (ACS) and geometry objects
         (pygris)
     """
+    current_filepath = Path(__file__).resolve()
+    lui_file_path = current_filepath.parents[1] / "data" / "parcel_tract_linked.pkl"
+
     lui_data = pd.read_pickle(lui_file_path)
     acs_data = acs.acs_clean(CENSUS_KEY)
 
