@@ -4,6 +4,16 @@ import pandas as pd
 import pygris
 
 def get_geodata_2018(landuse_path):
+    """
+    Performs a geospatial link between land parcel and census tract data. Assigns
+    the census tract that contains the centroid of a land parcel.
+
+    Writes to a local file as a Pandas pickle to prevent repeated computation.
+
+    Arguments:
+        landuse_path: The filepath of the file containing land parcel data
+    """
+    
     # Load as geopandas
     landuse = gpd.read_file(landuse_path)
     tracts = pygris.tracts(state="IL", county="Cook", year=2018, cb=True)
