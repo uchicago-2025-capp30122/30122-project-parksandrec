@@ -1,11 +1,12 @@
 import geopandas as gpd
 from datetime import datetime
 import pandas as pd
+import pygris
 
-def get_geodata_2018(landuse_path, tract_path):
+def get_geodata_2018(landuse_path):
     # Load as geopandas
     landuse = gpd.read_file(landuse_path)
-    tracts = gpd.read_file(tract_path)
+    tracts = pygris.tracts(state="IL", county="Cook", year=2018, cb=True)
 
     # Drop columns not used for analysis. LANDUSE2 is the seondary land use type
     # but we are only focused on the LANDUSE primary land use type variable
