@@ -10,7 +10,18 @@ ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890%+,^=._"
 
 
 def get_lui_data(page_url):
-    """ """
+    """
+    Deprecated
+
+    Query geojson records of land use inventoried parcels for 2013
+
+    Inputs:
+        page_url
+
+    Returns:
+        response(string): string element containing 2000 land use records
+
+    """
     cache_directory = CACHE_DIR
     cache_directory.mkdir(exist_ok=True)
 
@@ -33,7 +44,20 @@ def get_lui_data(page_url):
 
 
 def write_geojson(filename, record_count=0, max_records=100000):
-    """ """
+    """
+    Build geojson data base via page iteration of API queries containing
+    records of land use parcels for 2013.
+
+    Input:
+        filename: Desired file name for geojson output
+        record_count: initial parameter for pagination
+        max_records: record limit to prevent memory issues
+
+
+    Returns:
+        None. Creates geojson file in local directory.
+
+    """
     assert record_count < max_records
 
     features = []

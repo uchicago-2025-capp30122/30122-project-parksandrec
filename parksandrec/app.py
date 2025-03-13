@@ -6,6 +6,7 @@ import json
 from parksandrec.preprocessing import merge
 from parksandrec.viz import charts
 
+# Global objects
 dashboard = Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
 
 data_tract = merge.collapse_tract()
@@ -16,6 +17,8 @@ tt_cols = data_tract[
     ["tract", "tot_pop", "avg_hh_size", "median_hh_income", "med_val_own_occ"]
 ]
 
+
+# interactive figures
 fig_choro = px.choropleth_map(
     title="Distribution of Open Space in Cook County by Census Tract",
     subtitle="Percentage of Land Use assigned to Open Space - 2018",
@@ -51,6 +54,8 @@ fig_choro.update_layout(coloraxis=dict(colorbar=dict(orientation="h", y=-0.20)))
 
 default_graph = charts.plot_income_open_space("tot_open_space_prop", "<", 0.01)
 
+
+# text elements 
 title = dcc.Markdown(
     """
 # **ParksAndRec: From Pawnee to Chicago**
@@ -108,15 +113,27 @@ This tool allows researchers and policymakers to understand how the distribution
 
 about_body = dcc.Markdown(
     """
-Contributors:
+# parksAndRec: Understanding the Spatial and Demographic Distribution of Open Space in Chicago
 
-- Sarah Hussain
-- Raghav Mehrotra
-- Jose Maria (Chema) Galvez
-- Pablo Hernandez
+This project asks two questions: How is open space spatially distributed across Cook County? Who has access to these open spaces? 
+
+We use 2018 land use data from the [Chicago Metropolitan Agency for Planning](https://datahub.cmap.illinois.gov/datasets/CMAPGIS::2018-land-use-inventory-for-northeastern-illinois/about), which classifies open spaces into five subcategories: Recreational, Golf Courses, Conservation, Non-Public, and Trails/Greenways. We also spatialize Vacant Land from the same dataset to argue that not all open space can be understood in the same way.
+
+To understand who has access to open space (that falls within the five subcategories), we assign each land parcel from the spatial dataset to a census tract, and produce socio-demographic statistics at tract level. We downloaded census tract spatial data  from the pygris package and accessed statistical data on the tracts from the [American Community Survey API](https://www.census.gov/programs-surveys/acs/data/data-via-api.html). These include attributes such as median household income, race, and property values. In addition to this visual, we provide the user with an interactive tool that allows them to filter Cook County by specific land use area and understand how that impacts income distributions across Census tracts.
+
+### Data Sources
+parksAndRec uses land parcel level data from the [Chicago Metropolitan Agency for Planning](https://datahub.cmap.illinois.gov/datasets/CMAPGIS::2018-land-use-inventory-for-northeastern-illinois/about), which can be downloaded as a GeoJSON, Shapefile, and several other formats. The geospatial data for the Census tracts in Cook County came from the Census’s [TIGER files](https://www2.census.gov/geo/tiger/GENZ2018/shp/), which are also available to download. The sociodemographic data came from the American Community Survey [API](https://www.census.gov/programs-surveys/acs/data/data-via-api.html).
+
+## Team parksAndRec
+- José María (Chema) Gálvez Enríquez <jmgalvez@uchicago.edu>
+- Pablo Hernandez Pedraza <phernandezpedraz@uchicago.edu>
+- Raghav Mehrotra <raghavm@uchicago.edu>
+- Sarah Hussain <sthussain@uchicago.edu>
+
 """
 )
 
+# Card UI structure to be presented in each tab
 graph1_card = dbc.Card(
     [
         dbc.CardHeader(html.H3("Where is the open space in Cook County?")),
@@ -139,6 +156,7 @@ graph3_card = dbc.Card(
     ]
 )
 
+# Tab layout
 tab1_content = html.Div(
     [
         dbc.Row(
@@ -250,6 +268,7 @@ tab3_content = html.Div(
     ]
 )
 
+# Top level dashboard layout
 
 dashboard.layout = [
     html.Div(
@@ -301,12 +320,13 @@ dashboard.layout = [
     ),
 ]
 
-
+# server functions handling interactivity
 @callback(
     Output(component_id="selected_tract", component_property="children"),
     Output(component_id="race-table", component_property="data"),
     Input(component_id="choropleth-map", component_property="clickData"),
 )
+
 def render_race_table(clickData):
     if not clickData:
         return " ", []

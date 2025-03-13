@@ -7,7 +7,7 @@ from pathlib import Path
 CENSUS_KEY = os.getenv("CENSUS_KEY")
 
 
-def merge_data():
+def merge_data(lui_file_path):
     """
 
     DEPRECATED
@@ -50,12 +50,15 @@ def collapse_tract():
     current_filepath = Path(__file__).resolve()
     lui_file_path = current_filepath.parents[1] / "data" / "parcel_tract_linked.pkl"
 
+    # load clean data
     lui_data = pd.read_pickle(lui_file_path)
     acs_data = acs.acs_clean(CENSUS_KEY)
 
+    # get geospatial attributes for all census tracts 
     il_tracts = pygris.tracts(state="IL", county="031", year=2018, cb=True)
     il_tracts_fil = il_tracts[["TRACTCE", "geometry"]]
 
+    # pivot the data into census tract level and sum Shape_Area for each land use category
     lui_tract = lui_data.pivot_table(
         index="census_tract_id",
         columns="LANDUSE",
@@ -64,6 +67,7 @@ def collapse_tract():
         fill_value=0,
     )
 
+    # merge sociodemographic data with census tract polygons
     census_merged = pd.merge(
         lui_tract, acs_data, left_on="census_tract_id", right_on="tract", how="inner"
     )
@@ -147,6 +151,7 @@ def collapse_tract():
     # calculate prop of each open space type out of total open space area
     open_space_prop = ["3100_prop", "3200_prop", "3300_prop", "3400_prop", "3500_prop"]
 
+    # calculate the contribution of each open space to the total open space area in each tract 
     for prop in open_space_prop:
         new_col = prop + "_open"
         census_merged[new_col] = (
@@ -191,8 +196,10 @@ def collapse_tract():
         "3500_prop_open",
     ]
 
+    # filter to desired columns 
     census_merged_fil = census_merged[cols_to_keep]
-
+    
+    # merge spatialized sociodemographic data with land use data at census tract level
     full_merge = pd.merge(
         il_tracts_fil,
         census_merged_fil,
