@@ -82,7 +82,7 @@ def test_geospatial_pickle_file_exists():
     in the expected location.
     """
     current_filepath = Path(__file__).resolve()
-    expected_pickle = current_filepath.parents[1] / "data" / "linked_2018_data.pkl"
+    expected_pickle = current_filepath.parents[1] / "data" / "parcel_tract_linked.pkl"
     
     assert expected_pickle.exists(), f"Expected pickle file not found at: {expected_pickle}"
 
@@ -99,7 +99,7 @@ def test_geospatial_centroid_identified(temp_landuse_file, dummy_tracts):
     # Run the function with the dummy tracts.
     get_geodata_2018(str(file_path), tracts_dummy=dummy_tracts)
     
-    exp_pickle = Path(__file__).resolve().parents[1] / "data" / "linked_2018_data.pkl"
+    exp_pickle = Path(__file__).resolve().parents[1] / "data" / "test_parcel_tract_linked.pkl"
     result_gdf = pd.read_pickle(str(exp_pickle))
     
     # Expect one matched parcel with census_tract_id '001'.
@@ -122,7 +122,7 @@ def test_geospatial_centroid_dropped(temp_landuse_file, dummy_tracts):
     get_geodata_2018(str(file_path), tracts_dummy=dummy_tracts)
     
     # Construct the expected pickle file path
-    exp_pickle = Path(__file__).resolve().parents[1] / "data" / "linked_2018_data.pkl"
+    exp_pickle = Path(__file__).resolve().parents[1] / "data" / "test_parcel_tract_linked.pkl"
     result_gdf = pd.read_pickle(str(exp_pickle))
     
     # Since the parcel's centroid is outside the tract, data should be empty.
